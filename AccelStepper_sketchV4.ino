@@ -1,7 +1,13 @@
-/* Example sketch to control a stepper motor with 
-   DRV8825 stepper motor driver, AccelStepper library 
-   and Arduino: continuous rotation. 
-   More info: https://www.makerguides.com */
+/* Telsa Coil Winder sketch to control a stepper motor with 
+   DRV8825 stepper motor driver, AccelStepper library, 
+   Arduino Nano, and Nextion Display with Nextion Library.
+
+   Developer:     
+
+   Github:  https://
+
+   More info about AccelStepper can be found here: https://www.makerguides.com 
+*/
 
 #include "AccelStepper.h"
 #include <Nextion.h>
@@ -25,14 +31,13 @@
 #define limitSwitch 6
 #define sleepPin 5
 
-//all the variables**********************************************************************************************************
-//int limitSwitch = 6;   // limit switch pin
-
+//All the variables**********************************************************************************************************
 int counter=0;
 uint32_t awgStep = 0; 
 uint32_t turnsTotal = 0;
 uint32_t coilLength = 0;
 uint32_t offset = 0;
+uint32_t stepby = 25;   // default number of steps
 
 // Flags
 bool started = false;
@@ -42,14 +47,12 @@ bool offSetPlus = false;
 bool offSetMinus = false;
 bool pause = false;
 
-String str = String("Complete Length: ");
-
 // Create a new instance of the AccelStepper class:
 AccelStepper stepper = AccelStepper(motorInterfaceType, stepPin, dirPin);  // Coil motor
 AccelStepper stepper2 = AccelStepper(motorInterfaceType, stepPin2, dirPin2);  // Awg Wire Motor
 
-//defining all the buttons and input inputs and outputs on the nextion display 
-// Make sure that your page and the Id match whats in Nextion.  If not you will get very strange results.
+// Defining all the buttons and inputs and outputs on the nextion display 
+// Make sure that your page and the Id match whats in Nextion.  If not you will get very strange results.  (page, id, name)
 
 // Page 0
 NexPage page0    = NexPage(0, 0, "page0");
@@ -58,6 +61,7 @@ NexPage page0    = NexPage(0, 0, "page0");
 NexButton bHome=NexButton(1, 2, "bHome"); // define home button
 NexButton bOffSetPlus=NexButton(1, 3, "bOffSetPlus"); // define plus offset button
 NexButton bOffSetMinus=NexButton(1, 4, "bOffSetMinus"); // define minus offset button
+NexDSButton btStepby=NexDSButton(1, 7, "btStepby"); // define number of steps to move 
 
 // Pag 2
 NexButton bPlus10=NexButton(2, 6,"bPlus10");   // Length plus 10 button
@@ -87,6 +91,7 @@ NexTouch *nex_listen_list[] = {
     &bHome,
     &bOffSetPlus,
     &bOffSetMinus,
+    &btStepby,
     &bPlus10,
     &bMinus10,
     &bPlus1,
@@ -103,6 +108,7 @@ NexTouch *nex_listen_list[] = {
     NULL
    };
 
+// Setup all buttons
 // Start button  ****************************************************************************
 void bHomePopCallback(void *ptr) { 
   home=true;
@@ -119,6 +125,17 @@ void bOffSetPlusPopCallback(void *ptr) {
 void bOffSetMinusPopCallback(void *ptr) { 
   offSetMinus = true;
   debugln("bOffSetMinus");
+}
+
+void btStepbyPopCallback(void *ptr){
+  uint32_t dual_state = 0;
+  btStepby.getValue(&dual_state);
+  if(dual_state==1){
+    stepby = 100;
+  }
+  else if(dual_state==0){
+     stepby = 25;
+  }
 }
 
 // Length Buttons   *******************************************************************************
@@ -180,12 +197,15 @@ void bStartPopCallback(void *ptr) {
     // did not work for some reason.
     //nTotalTurns.setValue(turnsTotal);
     started = true;
+
+    //  Wake Motors up
+    digitalWrite(sleepPin, HIGH);
   }else{
     tStatus.setText("Please enter coil and Awg");
   }
 } 
 
-// Back Button
+// Back Button  ********************************************************************************
 void bBackPopCallback(void *ptr) { 
 
   debugln("bBack");
@@ -198,6 +218,7 @@ void bBackPopCallback(void *ptr) {
   nAwg.setValue(0);
   nTotalTurns.setValue(0);
 }
+
 // Pause Button  ********************************************************************************
 void btPausePopCallback(void *ptr){
 	
@@ -227,6 +248,7 @@ void setup() {
   bHome.attachPop(bHomePopCallback, &bHome);   // Home button
   bOffSetPlus.attachPop(bOffSetPlusPopCallback, &bOffSetPlus);     // Offset from endstop buttons
   bOffSetMinus.attachPop(bOffSetMinusPopCallback, &bOffSetMinus);  // Offset from endstop buttons
+  btStepby.attachPop(btStepbyPopCallback, &btStepby);  // Step by from the endstop 
   bPlus10.attachPop(bPlus10PopCallback, &bPlus10);    // Length plus 10 button
   bMinus10.attachPop(bMinus10PopCallback, &bMinus10); // Length Minus 10 button
   bPlus1.attachPop(bPlus1PopCallback, &bPlus1);       // Length plus 1 button
@@ -245,9 +267,10 @@ void setup() {
   stepper.setMaxSpeed(1000);
   stepper2.setMaxSpeed(1000);
 
-  // Must have a PULLUP on the limitswitch
+  // Must have a PULLUP on the limitswitch  INPUT will not work with a V-156-1C25 Micro Switch - Normally Opened (NO)
   pinMode(limitSwitch, INPUT_PULLUP);
 
+  // Put all motors to sleep   -- Not used at this time.
   pinMode(sleepPin, OUTPUT);
 
   digitalWrite(sleepPin, LOW);
@@ -289,7 +312,7 @@ void loop() {
   // set start location.
   if(offSetPlus == true && home == true && stop == true){
     stepper2.setCurrentPosition(0);
-    while(stepper2.currentPosition() != 20){
+    while(stepper2.currentPosition() != stepby){
       stepper2.setSpeed(200);
       stepper2.runSpeed();
     }
@@ -299,7 +322,7 @@ void loop() {
   // set start location
   if(offSetMinus == true && home == true && stop == true){
     stepper2.setCurrentPosition(0);
-    while(stepper2.currentPosition() != -20){
+    while(stepper2.currentPosition() != -stepby){
       stepper2.setSpeed(-200);
       stepper2.runSpeed();
     }
@@ -313,8 +336,8 @@ void loop() {
       // Set the current position to 0:
       stepper.setCurrentPosition(0);
 
-      // Run the motor forward at 200 steps/second until the motor reaches 200 steps (1 revolution):
-      while(stepper.currentPosition() != 200)
+      // Run the motor forward at 200 steps/second until the motor reaches 600 steps (1 revolution - 3:1 ratio):
+      while(stepper.currentPosition() != 600)
       {
         stepper.setSpeed(200);
         stepper.runSpeed();
@@ -333,10 +356,6 @@ void loop() {
       }
       delay(200);
     }else{
-      // Set ending message 
-      //String str = "Complete: Length: " + coilLength;  // had to split lines.  Complier did not like the syntex
-      //str = str + " AWS: " + awgStep + " turnsTotal: " + turnsTotal;
-      //tStatus.setText(str.c_str());
       tStatus.setText("Complete");
       delay(10000);
 
@@ -352,7 +371,9 @@ void loop() {
       nCount.setValue(0);
       nAwg.setValue(0);
       nTotalTurns.setValue(0);
-      //tStatus.setText("Complete");
+
+      // Put Motors to sleep
+      digitalWrite(sleepPin, LOW);
 
       // Reset page to page 0 for the next run
       tStatus.setText("Ready");
