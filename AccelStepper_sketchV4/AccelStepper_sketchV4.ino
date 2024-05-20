@@ -16,7 +16,7 @@
    calculates.  For example:  Spec 140mm coil with AWG 34 =  JavaCT= 873, Winder=874.    This is due to rounding.  The winder is always 
    rounds up to the next whole number.
 
-   The winder carriage is set to 1/4 step currently.   It works find with wire gauages we are currently using.   For wire under 36 gauage the
+   The winder carriage is set to 1/4 step currently.   It works find with wire gauages we are currently using.   For wire under 36 gauage 
    consider changing 1/8 to smaller steps.   The step resolution may not be small enough otherwise.
 
    The coil winder is set to full step.  200 steps per revolution.
