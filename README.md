@@ -15,7 +15,8 @@ The repository is organized in the following fashion:
 
 Masculinity -  https://www.youtube.com/watch?v=HymLeTU4M8 - This projects provided most of my inspiration for my build.
 
-carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   Who has beening using some of the code from my project.
+carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   Who has been using some of the code from my project.   He has done on really good design work.  Please take a look.
+		
 
 ## Note:
 
