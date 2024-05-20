@@ -23,5 +23,8 @@ carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   Who has 
 This project is a work in progress, and well continue to change as I know more.
 
 
+![Alt text](/Images/CoilWinder.jpg)
+
+
 
 
