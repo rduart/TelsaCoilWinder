@@ -15,15 +15,11 @@ The repository is organized in the following fashion:
 
 Masculinity -  https://www.youtube.com/watch?v=HymLeTU4M8 - This projects provided most of my inspiration for my build.
 
-carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   Who has been using some of the code from my project.   He has done on really good design work.  Please take a look.
-		
+carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   Who has beening using some of the code from my project.
 
 ## Note:
 
-This project is a work in progress, and well continue to change as I know more.
-
-
-![Alt text](/Images/CoilWinder.jpg)
+This project is a work in progress, and well continue to change as I know more.  Picture shows AWG 26, 28, 32, 34
 
 
 
