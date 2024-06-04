@@ -19,6 +19,13 @@
    The winder carriage is set to 1/4 step currently.   It works find with wire gauages we are currently using.   For wire under 36 gauage 
    consider changing 1/8 to smaller steps.   The step resolution may not be small enough otherwise.
 
+   8mm / 800 steps = .01 mm/step     -- Lead Screw has 4 starts
+
+   After much testing. I discovered I am not able to wind the coil based on the wire size alone.  There is always very small gaps, so I added 
+   an difference offset to account for the extra spaces the exist between the wire coils.
+
+   I determined this by measuring the coil after it was created.   For example: AWG 34 wire, 100MM coil created a 114MM coil. 114mm / totalTurns = offset | offset - wire dia = diffoffset
+
    The coil winder is set to full step.  200 steps per revolution.
 
    The nextion libray is has several issue.  Once in a while you need to either get or set the same atttribute twice or more to either update the 
@@ -27,6 +34,7 @@
 
 #include "AccelStepper.h"
 #include <Nextion.h>
+#include <math.h>
 
 // Setup debug displays.  Change to 0 to output debug messages.  1 to surpress debug messages.
 #define DEBUG 1
@@ -49,13 +57,16 @@
 
 //All the variables**********************************************************************************************************
 int counter = 0;
+int countLead = 0;
 uint32_t awgStep = 0;       // Number of steps needed of each wire diameter.
 uint32_t turnsTotal = 0;    // Total calculated number of turns.
 uint32_t coilLength = 0;    // Overall coil length.
 uint32_t stepby = 25;       // default number of steps
+float motorSpeed = 200;       // default number of steps
 float wiredia = 0;          // Diameter of the wire.  
 float estConstant = 17.42;  // Used to calculate estimated time.  If you change the motor speed this value needs to be reset. 
 uint32_t estTime = 0;       // Estimated time to complete the winding of the coil.
+uint32_t lead = 0;          // How many coil to make before starting wire carriage -- determines how tight the coils by delaying the carriage.
 
 // Flags
 bool started = false;        //  Flag that is set by the start button.
@@ -210,48 +221,69 @@ void bMinus1PopCallback(void *ptr) {
   debugln(coilLength,DEC); 
 }
 
-// AWG Wire buttons   *************************************************************************
-void b26PopCallback(void *ptr) { 
+// AWG Wire buttons   *************************************************************************  
+// 8mm / 800 steps = .01 mm/step     -- Lead Screw has 4 starts   --  enamel Wire coating is like .0285 mm
+// After much testing. I discovered I am not able to wind the coil based on the wire size alone.  There is always very small gaps, so I added an offet to account for the extra space.
+// I determined this simple by measuring the coil after it was created.   For example: AWG 34 wire, 100MM coil created a 114MM coil. 114mm / totalTurns = offset | offset - wire dia = diffoffset
+
+//                                   Wire Size calculation     Actual from measurement        Difference - Offset
+void b26PopCallback(void *ptr) {  // .40386 / .01 = 40.386  |  
   debugln("26");
-  //awgStep = 50; 
-  awgStep = 47;  
-  wiredia=.40386;  // Wire Diameter
+  //awgStep = 50;  // orig
+  //awgStep = 47;
+  awgStep = 43;
+  lead = 3;   
+  wiredia=.4334;  // Wire Diameter  .4334 .4049 + .0285 = .4334  // Thanks to carl1961
 }
-void b28PopCallback(void *ptr) { 
+//                                   Wire Size calculation     Actual from measurement        Difference - Offset
+void b28PopCallback(void *ptr) { // .32004 / .01 = 32.004   |  actual: .3429 / .01 = 34.29  | .3429 - .32004 = .0229
   debugln("28");
-  //awgStep = 40; 
-  awgStep = 37; 
-  wiredia=.32004;  // Wire Diameter
+  //awgStep = 40;  // orig
+  //awgStep = 32;
+  awgStep = 34;
+  lead = 5;  
+  wiredia=.32004 + .0229;  // Wire Diameter
 }
-void b30PopCallback(void *ptr) { 
+//                                   Wire Size calculation     Actual from measurement        Difference - Offset
+void b30PopCallback(void *ptr) { // .254 / .01 = 25.4       |        
   debugln("30");
-  //awgStep = 29; 
-  awgStep = 27;
-  wiredia=.254;  // Wire Diameter
+  //awgStep = 29;  // orig
+  //awgStep = 27;
+  awgStep = 25;
+  lead = 5;
+  wiredia=.254 + .0285;  // Wire Diameter
 }
-void b32PopCallback(void *ptr) { 
+//                                   Wire Size calculation       Actual from measurement        Difference - Offset
+void b32PopCallback(void *ptr) {  // Wire: .2032 / .01 = 20.32 | actual: .2236 / .01 = 22.36 | .2236 - .2032 = .0204
   debugln("32");
-  //awgStep = 20;  
-  awgStep = 18;
-  wiredia=.2032;  // Wire Diameter
+  //awgStep = 20;  // Wire Size  - 20.32
+  awgStep = 22;   // Actual measured.  - 22.36
+  lead = 10;      // Number of turn before carriage start moving.
+  wiredia=.2032 + .0204;  // Wire Diameter + diff offset
 }
-void b34PopCallback(void *ptr) { 
+//                                   Wire Size calculation          Actual from measurement        Difference - Offset
+void b34PopCallback(void *ptr) {  // wire: .16002 / .01 = 16.002  | actual: .1829 / .01 = 18.29  | .1826 - .16002 = .02288
   debugln("34");
-  //awgStep = 15; 
-  awgStep = 13; 
-  wiredia=.16002;  // Wire Diameter
+  //awgStep = 15;   // orig
+  //awgStep = 16;   // Wire Size - 16.002
+  awgStep = 18;     // Actual measured  - 18.29
+  lead = 10;        // Number of turn before carriage start moving.
+  wiredia=.16002 + .02288;  // Wire Diameter + diff offset
 }
-void b36PopCallback(void *ptr) { 
+//                                   Wire Size calculation    Actual from measurement        Difference - Offset  
+void b36PopCallback(void *ptr) {  // .127 / .01 = 12.7      | actual .14104 / .01 = 14.10   | .14104 - .127 = .01404
   debugln("36");
-  //awgStep = 10;
-  awgStep = 8;  
-  wiredia=.127;  // Wire Diameter
+  //awgStep = 10; // orig
+  //awgStep = 13; // wire size  12.7
+  awgStep = 14;   // Actual measured  - 14.10
+  lead = 12;      // Number of turn before carriage start moving.
+  wiredia=.127 + .01404;  // Wire Diameter + offset
 }
 // Next button - navigate to page 3
 void b2NextPopCallback(void *ptr) { 
   debugln("b2Next");
   if (coilLength != 0 && awgStep !=0){
-    turnsTotal=(int(coilLength/wiredia));
+    turnsTotal=(int((coilLength/wiredia) +.5)); // int() cast truncates (aka "rounds down") + .5 make sure 10.5 is a 11 while 10.3 is still 10.
     debugln(turnsTotal,DEC);
   
     // Having trouble sending numbers back to Nextion.  Converting to text appears to help.
@@ -261,8 +293,11 @@ void b2NextPopCallback(void *ptr) {
     tnTotalTurns.setText(numberArray);
     tnTotalTurns.setText(numberArray);
 
-    // Cacluate the estimated time in minutes.
-    estTime = turnsTotal / estConstant + 1;   // Calculate the number of whole minutes -  Should be within a minute.
+    // Cacluate the estimated time in minutes.  Seconds are being ignored, so it could be 1 to 59 second off from the actual time.
+
+    // estTime = turnsTotal / estConstant + 1   Calculate the number of whole minutes -  Should be within a minute.
+
+    estTime = turnsTotal / estConstant;     // Calculate the number of whole minutes -  Should be within a minute.
     debugln(estTime,DEC);
     
     String stringOne;
@@ -367,7 +402,7 @@ void setup() {
   bOffSetPlus.attachPop(bOffSetPlusPopCallback, &bOffSetPlus);     // Offset from endstop buttons
   bOffSetMinus.attachPop(bOffSetMinusPopCallback, &bOffSetMinus);  // Offset from endstop buttons
   btStepby.attachPop(btStepbyPopCallback, &btStepby);  // Step by from the endstop 
-  btVarnish.attachPop(btVarnishPopCallback, &btVarnish);  // Step by from the endstop 
+  btVarnish.attachPop(btVarnishPopCallback, &btVarnish);  // Varnish Button
   bPlus10.attachPop(bPlus10PopCallback, &bPlus10);    // Length plus 10 button
   bMinus10.attachPop(bMinus10PopCallback, &bMinus10); // Length Minus 10 button
   bPlus1.attachPop(bPlus1PopCallback, &bPlus1);       // Length plus 1 button
@@ -415,7 +450,7 @@ void loop() {
         debugln("Found Low");
         stepper2.setCurrentPosition(0);
         while(stepper2.currentPosition() != 75){
-          stepper2.setSpeed(200);
+          stepper2.setSpeed(400);
           stepper2.runSpeed();
         }
         debugln("started");
@@ -426,7 +461,7 @@ void loop() {
       }else{ 
         // Limit switch is high until presssed
         //debugln("Found High");
-        stepper2.setSpeed(-200);
+        stepper2.setSpeed(-400);
         stepper2.runSpeed();
       }
     }
@@ -436,7 +471,7 @@ void loop() {
   if(offSetPlus == true && home == true && stop == true){
     stepper2.setCurrentPosition(0);
     while(stepper2.currentPosition() != stepby){
-      stepper2.setSpeed(200);
+      stepper2.setSpeed(400);
       stepper2.runSpeed();
     }
     offSetPlus = false;
@@ -446,7 +481,7 @@ void loop() {
   if(offSetMinus == true && home == true && stop == true){
     stepper2.setCurrentPosition(0);
     while(stepper2.currentPosition() != -stepby){
-      stepper2.setSpeed(-200);
+      stepper2.setSpeed(-400);
       stepper2.runSpeed();
     }
     offSetMinus = false;
@@ -456,7 +491,7 @@ void loop() {
   if(varnish == true && home == true && stop == true){
     stepper.setCurrentPosition(0);
     while(stepper.currentPosition() != -600){
-      stepper.setSpeed(-200);
+      stepper.setSpeed(-400);
       stepper.runSpeed();
     }
   }
@@ -479,14 +514,18 @@ void loop() {
       nCount.setValue(counter);
       nCount.setValue(counter);
       delay(200);
-      // Reset the position to 0:
-      stepper2.setCurrentPosition(0);
+      if(lead == countLead) {   // make some turns prior to the carriage starting.  Make a tighter coil.
+        // Reset the position to 0:
+        stepper2.setCurrentPosition(0);
 
-      // Run the motor forwards at 200 steps/second until the motor reaches awgStep steps:
-      while(stepper2.currentPosition() != awgStep) 
-      {
-        stepper2.setSpeed(200);
-        stepper2.runSpeed();
+        // Run the motor forwards at 200 steps/second until the motor reaches awgStep steps:
+        while(stepper2.currentPosition() != awgStep) 
+        {
+          stepper2.setSpeed(200);
+          stepper2.runSpeed();
+        }
+      }else{
+        countLead++;
       }
       delay(200);
     }else{
@@ -499,6 +538,7 @@ void loop() {
       stop=false;
       home=false;
       counter=0;
+      countLead=0;
       coilLength=0;
       awgStep=0;
       turnsTotal=0;
