@@ -25,7 +25,7 @@ carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   He has b
 > I would like to thanks carl1961 for all his work in refining the step sizes for the wire carraige and for his help in refining the wire diameter.  Also if your are using a lead screw with 2 starts carl1961 has already worked out the steps for the wire carriage.  
 
 > [!CAUTION]
->This project is a work in progress, and well continue to change as I know more.  Picture shows AWG 26, 28, 32, and 34 wire testing.
+>This project is a work in progress, and well continue to change as I know more.
 
 ## Implementations
 
