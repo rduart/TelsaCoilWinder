@@ -294,9 +294,6 @@ void b2NextPopCallback(void *ptr) {
     tnTotalTurns.setText(numberArray);
 
     // Cacluate the estimated time in minutes.  Seconds are being ignored, so it could be 1 to 59 second off from the actual time.
-
-    // estTime = turnsTotal / estConstant + 1   Calculate the number of whole minutes -  Should be within a minute.
-
     estTime = turnsTotal / estConstant;     // Calculate the number of whole minutes -  Should be within a minute.
     debugln(estTime,DEC);
     

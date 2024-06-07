@@ -19,10 +19,10 @@ The repository is organized in the following fashion:
 
 Masculinity -  https://www.youtube.com/watch?v=HymLeTU4M8Q - This projects provided most of my inspiration for my build.
 
-carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   Who has beening using some of the code from my project.
+carl1961 - https://github.com/carl1961/Arduino-Nano-Tesla-Coil-Winder   He has been doing some great work.  Please make sure you take a look at his GitHub.  We have successfully beening sharing software and other components.
 
 >[!NOTE]
-> I would like to thanks carl1961 for all his work in refining the step size for the wire carraige and for his help in refining the wire diameter.
+> I would like to thanks carl1961 for all his work in refining the step sizes for the wire carraige and for his help in refining the wire diameter.  Also if your are using a lead screw wuth 2 starts carl1961 has already worked out the steps for the wire carriage.  
 
 > [!CAUTION]
 >This project is a work in progress, and well continue to change as I know more.  Picture shows AWG 26, 28, 32, and 34 wire testing.
@@ -34,15 +34,17 @@ There are two seperate implemention of the software. Make sure you pair the corr
 
 ### AccelStepper_sketchV4.ino & CoilWinderV4.HMI
 
-This version use the coil length to calculate the number of turns and the estimated time of the build.
+This version use the coil length to calculate the number of turns and the estimated time for the build.
 
 
 ### AccelStepper_sketchAlt.ino & CoilWinderAlt.HMI
 
-This version use the coil length, or the number of turns.  If coil length is specified the number of turns is cacluated along with the estimated time.  If the number of turns was specified the estimated time for the build is calculated.  
+This version use the coil length, or the number of turns.  If coil length is specified, the number of turns is cacluated along with the estimated time.  If the number of turns is specified, the estimated coil length and the estimated time for the build is calculated.  
 
 
 
 ![Alt text](/Images/CoilWinder.jpg)
 
 
+>[!NOTE]
+If you have an questions or if you see a better way to have done something please open an issue and let me know. 

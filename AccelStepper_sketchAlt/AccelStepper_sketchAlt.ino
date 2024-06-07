@@ -62,7 +62,7 @@ uint32_t awgStep = 0;       // Number of steps needed of each wire diameter.
 uint32_t turnsTotal = 0;    // Total calculated number of turns.
 uint32_t coilLength = 0;    // Overall coil length.
 uint32_t stepby = 25;       // default number of steps
-float motorSpeed = 200;       // default number of steps
+float motorSpeed = 200;     // default number of steps
 float wiredia = 0;          // Diameter of the wire.  
 float estConstant = 17.42;  // Used to calculate estimated time.  If you change the motor speed this value needs to be reset. 
 uint32_t estTime = 0;       // Estimated time to complete the winding of the coil.
@@ -70,14 +70,14 @@ uint32_t lead = 0;          // How many coil to make before starting wire carria
 uint32_t estLength = 0;     // Estimated length in turns
 
 // Flags
-bool started = false;         //  Flag that is set by the start button.
+bool started = false;         // Flag that is set by the start button.
 bool home = false;            // Flag the is set by the home button.
 bool stop = false;            // Flag set at end to stop the winding from winding more coils
-bool offSetPlus = false;      //  Flag used to trigger a plus offset from home
-bool offSetMinus = false;     //  Flag used to trigger a minus offset from home
+bool offSetPlus = false;      // Flag used to trigger a plus offset from home
+bool offSetMinus = false;     // Flag used to trigger a minus offset from home
 bool pause = false;           // Flag that Causes the main loop to pause during winding the coil
 bool varnish = false;         // flag the causes the winding motor to turn until button state is changed
-bool useCoilLength = true;  // flag to use either coli length or number of turns
+bool useCoilLength = true;    // flag to use either coli length or number of turns
 
 // Create a new instance of the AccelStepper class:
 AccelStepper stepper = AccelStepper(motorInterfaceType, stepPin, dirPin);  // Coil motor
@@ -256,11 +256,12 @@ void btCoilPopCallback(void *ptr){
 
 }
 // AWG Wire buttons   *************************************************************************  
-// 8mm / 800 steps = .01 mm/step     -- Lead Screw has 4 starts   --  enamel Wire coating is like .0285 mm
-// After much testing. I discovered I am not able to wind the coil based on the wire size alone.  There is always very small gaps, so I added an offet to account for the extra space.
-// I determined this simple by measuring the coil after it was created.   For example: AWG 34 wire, 100MM coil created a 114MM coil. 114mm / totalTurns = offset | offset - wire dia = diffoffset
+// 8mm / 800 steps = .01 mm/step     -- Lead Screw has 4 starts   --  enamel Wire coating is like .0285mm
+// After much testing. I discovered I am not able to wind the coil based on the wire size alone.  
+// There was the enamel coating plus small gaps, so with the help of carl1961 we added an offest for each of the wire sizes.
 
-//                                   Wire Size calculation     Actual from measurement        Difference - Offset
+
+//                                   Wire Size calculation     Actual from measurement 
 //                                   Wire Size calculation   |   Step Calculation
 void b26PopCallback(void *ptr) {  // .4049 + .0285 = .4334       .4434 / .01 = 44.34   
   debugln("26");
@@ -323,10 +324,7 @@ void b3NextPopCallback(void *ptr) {
     tnTotalTurns.setText(numberArray);
     tnTotalTurns.setText(numberArray);
 
-    // Cacluate the estimated time in minutes.  Seconds are being ignored, so it could be 1 to 59 second off from the actual time.
-
-    // estTime = turnsTotal / estConstant + 1   Calculate the number of whole minutes -  Should be within a minute.
-
+    // Caculate the estimated time in minutes.  Seconds are being ignored, so it could be 1 to 59 second off from the actual time.
     estTime = turnsTotal / estConstant;     // Calculate the number of whole minutes -  Should be within a minute.
     debugln(estTime,DEC);
     
