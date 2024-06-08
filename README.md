@@ -42,10 +42,12 @@ This version use the coil length to calculate the number of turns and the estima
 This version use the coil length, or the number of turns.  If coil length is specified, the number of turns is cacluated along with the estimated time.  If the number of turns is specified, the estimated coil length and the estimated time for the build is calculated.  
 
 
- Picture shows AWG 26, 28, 32, and 34 wire testing.
-
+Tesla Coil Winder
 ![Alt text](/Images/CoilWinder.jpg)
 
+Picture shows AWG 26, 28, 32, 34, and 36 wire testing.
+![Alt text](/Images/20240605_133557.jpg)
 
 >[!NOTE]
 If you have an questions or if you see a better way to have done something please open an issue and let me know. 
+
