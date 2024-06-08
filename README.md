@@ -45,7 +45,7 @@ This version use the coil length, or the number of turns.  If coil length is spe
 Tesla Coil Winder
 ![Alt text](/Images/CoilWinder.jpg)
 
-Picture shows AWG 26, 28, 32, 34, and 36 wire testing.
+Picture shows AWG 26, 28, 32, 34, and 36 wire testing.  100MM coil various number of turns based on wire size.
 ![Alt text](/Images/20240605_133557.jpg)
 
 >[!NOTE]
