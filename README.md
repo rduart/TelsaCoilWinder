@@ -7,7 +7,7 @@ This repository contains the code and documentation needed to construct your own
 
 The repository is organized in the following fashion:
 - 3DPrinterFiles:  3D printed files.
-- AccelStepper_SketchV4:  Souce code for the Arduino Uno.  Accepts coil lenght and wire diameter as imput.   
+- AccelStepper_SketchV4:  Souce code for the Arduino Uno.  Accepts coil lenght and wire diameter as input.   
 - AccelStepper_SketchAlt: Souce Souce code for the Arduino Uno.  Accepts coil length, number of turns and wire diameter as input.
 - Documentation:  Document describing the Tesla Coil Winder.  Explaination and parts list.
 - EasyEDA: Source for custom PCB.
