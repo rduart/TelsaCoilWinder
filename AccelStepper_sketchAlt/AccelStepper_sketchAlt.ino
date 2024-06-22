@@ -267,42 +267,42 @@ void b26PopCallback(void *ptr) {  // .4049 + .0285 = .4334       .4434 / .01 = 4
   debugln("26");
   awgStep = 43;
   lead = 3;         // Number of turn before carriage start moving.
-  wiredia = .4334;  // Wire Diameter .4049 + .0285 = .4334  
+  wiredia = .4334;  // Wire Diameter: .4049 + .0285 = .4334  
 }
 //                                   Wire Size calculation       Step Calculation
 void b28PopCallback(void *ptr) { // 0.3211 + 0.0285 = 0.3496  |  .3496 / .01 = 34.96
   debugln("28");
   awgStep = 34;
   lead = 5;         // Number of turn before carriage start moving.
-  wiredia = .3496;  // Wire Diameter 0.3211 + 0.0285 = 0.3496
+  wiredia = .3496;  // Wire Diameter: 0.3211 + 0.0285 = 0.3496
 }
 //                                   Wire Size calculation   Step Calculation  
 void b30PopCallback(void *ptr) { // 0.2546 +  0.0285 = 0.2831 |  .2831 / .01 = 28.31    
   debugln("30");
   awgStep = 28;
-  lead = 7;
-  wiredia= .2831;  // Wire Diameter 0.2546 +  0.0285 = 0.2831
+  lead = 7;        // Number of turn before carriage start moving.
+  wiredia= .2831;  // Wire Diameter: 0.2546 +  0.0285 = 0.2831
 }
 //                                   Wire Size calculation       Step Calculation
 void b32PopCallback(void *ptr) {  // 0.2019 + 0.0285 = 0.2304 |  .2304 / .01 = 23.04 
   debugln("32");
   awgStep = 23;  
-  lead = 10;      // Number of turn before carriage start moving.
-  wiredia = .2304;  // Wire Diameter 0.2019 + 0.0285 = 0.2304
+  lead = 10;        // Number of turn before carriage start moving.
+  wiredia = .2304;  // Wire Diameter: 0.2019 + 0.0285 = 0.2304
 }
 //                                   Wire Size calculation         Step Calculation
 void b34PopCallback(void *ptr) {  // 0.1601 + 0.0285 = 0.1886  |   .1886 / .01 = 18.86  
   debugln("34");
   awgStep = 18;     
   lead = 10;        // Number of turn before carriage start moving.
-  wiredia = .1886;  // Wire Diameter + 0.1601 + 0.0285 = 0.1886
+  wiredia = .1886;  // Wire Diameter: 0.1601 + 0.0285 = 0.1886
 }
 //                                   Wire Size calculation      Step Calculation    
 void b36PopCallback(void *ptr) {  // .127 + 0.0285 = 0.1555  |  .1555 / .01 = 15.55 
   debugln("36");
   awgStep = 15;   
-  lead = 12;      // Number of turn before carriage start moving.
-  wiredia = .1555;  // Wire Diameter  .127 + 0.0285 = 0.1555
+  lead = 12;        // Number of turn before carriage start moving.
+  wiredia = .1555;  // Wire Diameter:  .127 + 0.0285 = 0.1555
 }
 // Next button - navigate to page 3
 void b3NextPopCallback(void *ptr) { 
